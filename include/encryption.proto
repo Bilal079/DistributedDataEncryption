@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package encryption;
+
+service EncryptionService {
+    rpc EncryptChunk (ChunkRequest) returns (ChunkResponse) {}
+}
+
+message ChunkRequest {
+    bytes data = 1;
+    int32 chunk_id = 2;
+    bytes key = 3;      //Changed from string to bytes
+    bytes iv = 4;       //Changed from string to bytes
+}
+
+message ChunkResponse {
+    bytes encrypted_data = 1;
+    int32 chunk_id = 2;
+    bool success = 3;
+    string error_message = 4;
+}
