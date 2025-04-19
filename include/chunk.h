@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <string>
-using namespacse std;
+using namespace std;
 
 struct FileChunk {
     vector<char> data;
@@ -17,5 +17,3 @@ public:
 };
 
 #endif // CHUNK_H
-
-Chunk.h
