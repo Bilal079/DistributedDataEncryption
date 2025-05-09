@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Distributed Encryption System</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <h1>Distributed Encryption System</h1>
+      <div class="header-controls">
+        <div id="system-info">
+          <span id="hostname"></span>
+          <span id="cpu-count"></span>
+        </div>
+      </div>
+    </header>
+    
+    <div class="content-container">
+      <!-- Sidebar with tabs -->
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <img src="assets/logo.png" alt="Logo" class="logo" id="appLogo">
+        </div>
+        <nav class="sidebar-nav">
+          <button class="nav-tab active" data-tab="file-operations">
+            <i class="fas fa-file-alt"></i>
+            <span>File Operations</span>
+          </button>
+          <button class="nav-tab" data-tab="worker-management">
+            <i class="fas fa-server"></i>
+            <span>Worker Management</span>
+          </button>
+          <button class="nav-tab" data-tab="dropbox-integration">
+            <i class="fab fa-dropbox"></i>
+            <span>Dropbox</span>
+          </button>
+          <button class="nav-tab" data-tab="logs">
+            <i class="fas fa-list"></i>
+            <span>Logs</span>
+          </button>
+          <button class="nav-tab" data-tab="settings">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+          </button>
+        </nav>
+      </aside>
+      
+      <!-- Main content area -->
+      <main class="main-content">
+        <!-- File Operations Tab -->
+        <section id="file-operations" class="tab-content active">
+          <div class="section-header">
+            <h2>File Operations</h2>
+          </div>
+          
+          <div class="panel">
+            <h3>Encryption / Decryption</h3>
+            
+            <div class="form-group mode-toggle">
+              <label>Operation Mode:</label>
+              <div class="toggle-container">
+                <button class="toggle-button active" id="encryptBtn">Encrypt</button>
+                <button class="toggle-button" id="decryptBtn">Decrypt</button>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="inputFile">Input File:</label>
+              <div class="file-input-container">
+                <input type="text" id="inputFilePath" class="file-path" readonly>
+                <button id="browseInputFile" class="browse-button" onclick="browseInputFile()">Browse</button>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="outputFile">Output File:</label>
+              <div class="file-input-container">
+                <input type="text" id="outputFilePath" class="file-path" readonly>
+                <button id="browseOutputFile" class="browse-button" onclick="browseOutputFile()">Override</button>
+              </div>
+              <small class="form-hint">Output file is automatically generated. Use Override only if you need a custom location.</small>
+            </div>
+            
+            <div class="form-group">
+              <label>Select Workers:</label>
+              <div id="workerSelection" class="worker-selection">
+                <p class="empty-state">No workers available. Please start workers in the Worker Management tab.</p>
+              </div>
+            </div>
+            
+            <div class="form-actions">
+              <button id="processFileBtn" class="btn primary-btn" onclick="processFile()">Encrypt File</button>
+            </div>
+          </div>
+          
+          <div class="panel">
+            <h3>Status</h3>
+            <div class="status-container">
+              <div id="progressContainer" class="progress-container" style="display: none;">
+                <label>Progress:</label>
+                <div class="progress-bar-container">
+                  <div id="progressBar" class="progress-bar" style="width: 0%;"></div>
+                </div>
+                <span id="progressText">0%</span>
+              </div>
+              <div id="statusMessage" class="status-message">Ready to process files</div>
+            </div>
+          </div>
+        </section>
+        
+        <!-- Worker Management Tab -->
+        <section id="worker-management" class="tab-content">
+          <div class="section-header">
+            <h2>Worker Management</h2>
+          </div>
+          
+          <div class="panel">
+            <h3>Start New Worker</h3>
+            <div class="form-group">
+              <label for="workerAddress">Worker Address:</label>
+              <div class="input-with-button">
+                <input type="text" id="workerAddress" placeholder="127.0.0.1:50051" value="127.0.0.1:50051">
+                <button id="startWorkerBtn" class="btn primary-btn" onclick="startWorker()">Start Worker</button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="panel">
+            <h3>Active Workers</h3>
+            <div id="workersList" class="workers-list">
+              <div class="empty-state">No active workers</div>
+            </div>
+          </div>
+        </section>
+        
+        <!-- Dropbox Integration Tab -->
+        <section id="dropbox-integration" class="tab-content">
+          <div class="section-header">
+            <h2>Dropbox Integration</h2>
+          </div>
+          
+          <div class="panel">
+            <h3>Configure Dropbox</h3>
+            <div class="form-group">
+              <label for="dropboxToken">Access Token:</label>
+              <input type="password" id="dropboxToken" placeholder="Enter your Dropbox access token">
+            </div>
+            
+            <div class="form-group">
+              <label for="dropboxFolder">Default Folder:</label>
+              <input type="text" id="dropboxFolder" placeholder="/encryption_files" value="/encryption_files">
+            </div>
+            
+            <div class="form-actions">
+              <button id="configureDropboxBtn" class="btn primary-btn">Save Configuration</button>
+            </div>
+          </div>
+          
+          <div class="panel">
+            <h3>Upload / Download</h3>
+            <div class="form-group">
+              <label for="localFilePath">Local File:</label>
+              <div class="file-input-container">
+                <input type="text" id="localFilePath" class="file-path" readonly>
+                <button id="browseLocalFile" class="browse-button">Browse</button>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="dropboxPath">Dropbox Path:</label>
+              <input type="text" id="dropboxPath" placeholder="/encryption_files/filename.encrypted">
+            </div>
+            
+            <div class="form-actions">
+              <button id="uploadFileBtn" class="btn secondary-btn">Upload File</button>
+              <button id="downloadFileBtn" class="btn secondary-btn">Download File</button>
+            </div>
+          </div>
+        </section>
+        
+        <!-- Logs Tab -->
+        <section id="logs" class="tab-content">
+          <div class="section-header">
+            <h2>Logs</h2>
+            <button id="clearLogsBtn" class="btn secondary-btn">Clear Logs</button>
+          </div>
+          
+          <div class="panel full-height">
+            <div id="logsContainer" class="logs-container">
+              <pre id="logOutput" class="log-output"></pre>
+            </div>
+          </div>
+        </section>
+        
+        <!-- Settings Tab -->
+        <section id="settings" class="tab-content">
+          <div class="section-header">
+            <h2>Settings</h2>
+          </div>
+          
+          <div class="panel">
+            <h3>General Settings</h3>
+            
+            <div class="form-group">
+              <label for="chunkSize">Chunk Size:</label>
+              <select id="chunkSize">
+                <option value="524288">512 KB</option>
+                <option value="1048576" selected>1 MB (Default)</option>
+                <option value="2097152">2 MB</option>
+                <option value="4194304">4 MB</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="tempDirectory">Temporary Directory:</label>
+              <div class="file-input-container">
+                <input type="text" id="tempDirectory" class="file-path">
+                <button id="browseTempDir" class="browse-button">Browse</button>
+              </div>
+            </div>
+            
+            <div class="form-group checkbox-group">
+              <input type="checkbox" id="enableLogs" checked>
+              <label for="enableLogs">Enable Detailed Logging</label>
+            </div>
+          </div>
+          
+          <div class="panel">
+            <h3>Security</h3>
+            
+            <div class="form-group checkbox-group">
+              <input type="checkbox" id="enableTLS">
+              <label for="enableTLS">Enable TLS for Worker Communication</label>
+            </div>
+            
+            <div class="form-group">
+              <label for="keyStorage">Key Storage Location:</label>
+              <div class="file-input-container">
+                <input type="text" id="keyStorage" class="file-path" value="encryption_key.bin">
+                <button id="browseKeyStorage" class="browse-button">Browse</button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-actions">
+            <button id="saveSettingsBtn" class="btn primary-btn">Save Settings</button>
+            <button id="resetSettingsBtn" class="btn secondary-btn">Reset to Defaults</button>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+  
+  <script src="renderer.js"></script>
+  <script>
+    // Global variables
+    // Note: variables are already defined in renderer.js
+    // - workers variable
+    // - isEncrypt variable
+
+    // Button click handlers
+    function startWorker() {
+      const addressInput = document.getElementById('workerAddress');
+      const address = addressInput ? addressInput.value.trim() : '127.0.0.1:50051';
+      console.log(`Starting worker at ${address}`);
+      
+      if (window.electronAPI && window.electronAPI.startWorker) {
+        window.electronAPI.startWorker(address);
+      }
+    }
+    
+    async function browseInputFile() {
+      console.log("Browse input file clicked");
+      if (window.electronAPI && window.electronAPI.openFileDialog) {
+        try {
+          const filePath = await window.electronAPI.openFileDialog();
+          if (filePath) {
+            const inputFilePath = document.getElementById('inputFilePath');
+            if (inputFilePath) {
+              inputFilePath.value = filePath;
+              updateOutputPath();
+            }
+          }
+        } catch (error) {
+          console.error("Error browsing for input file:", error);
+        }
+      }
+    }
+    
+    async function browseOutputFile() {
+      console.log("Browse output file clicked");
+      if (window.electronAPI && window.electronAPI.saveFileDialog) {
+        try {
+          const filePath = await window.electronAPI.saveFileDialog();
+          if (filePath) {
+            const outputFilePath = document.getElementById('outputFilePath');
+            if (outputFilePath) {
+              outputFilePath.value = filePath;
+            }
+          }
+        } catch (error) {
+          console.error("Error browsing for output file:", error);
+        }
+      }
+    }
+    
+    function processFile() {
+      const inputFilePath = document.getElementById('inputFilePath');
+      const outputFilePath = document.getElementById('outputFilePath');
+      
+      if (!inputFilePath || !inputFilePath.value) {
+        console.error("Input file is required");
+        return;
+      }
+      
+      const input = inputFilePath.value;
+      const output = outputFilePath ? outputFilePath.value : '';
+      
+      // Get selected workers - you'll need to implement this based on your UI
+      const selectedWorkers = getSelectedWorkers();
+      
+      if (selectedWorkers.length === 0) {
+        console.error("No workers selected");
+        return;
+      }
+      
+      console.log(`Processing file: ${isEncrypt ? 'encrypt' : 'decrypt'}, ${input} → ${output}`);
+      
+      if (window.electronAPI) {
+        if (isEncrypt && window.electronAPI.encryptFile) {
+          window.electronAPI.encryptFile(input, output, selectedWorkers.map(w => w.id));
+        } else if (!isEncrypt && window.electronAPI.decryptFile) {
+          window.electronAPI.decryptFile(input, output, selectedWorkers.map(w => w.id));
+        }
+      }
+      
+      // Show progress indicator
+      const progressContainer = document.getElementById('progressContainer');
+      if (progressContainer) {
+        progressContainer.style.display = 'flex';
+      }
+      
+      const statusMessage = document.getElementById('statusMessage');
+      if (statusMessage) {
+        statusMessage.textContent = `${isEncrypt ? 'Encrypting' : 'Decrypting'} file...`;
+      }
+    }
+    
+    // Update output path based on input path
+    function updateOutputPath() {
+      const inputFilePath = document.getElementById('inputFilePath');
+      const outputFilePath = document.getElementById('outputFilePath');
+      
+      if (!inputFilePath || !outputFilePath || !inputFilePath.value) return;
+      
+      const inputPath = inputFilePath.value;
+      let outputPath = '';
+      
+      if (isEncrypt) {
+        // For encryption, add .encrypted extension
+        outputPath = inputPath + '.encrypted';
+      } else {
+        // For decryption, remove .encrypted extension if present
+        if (inputPath.endsWith('.encrypted')) {
+          outputPath = inputPath.substring(0, inputPath.lastIndexOf('.encrypted'));
+        } else {
+          // If no .encrypted extension, add .decrypted to the filename
+          const lastDotIndex = inputPath.lastIndexOf('.');
+          if (lastDotIndex !== -1) {
+            const extension = inputPath.substring(lastDotIndex);
+            const basePath = inputPath.substring(0, lastDotIndex);
+            outputPath = basePath + '.decrypted' + extension;
+          } else {
+            outputPath = inputPath + '.decrypted';
+          }
+        }
+      }
+      
+      outputFilePath.value = outputPath;
+    }
+    
+    // Helper function to get selected workers
+    function getSelectedWorkers() {
+      return workers.filter(w => w.selected);
+    }
+    
+    // Update the workers UI
+    function updateWorkersUI() {
+      const workersList = document.getElementById('workersList');
+      if (!workersList) return;
+      
+      if (workers.length === 0) {
+        workersList.innerHTML = '<div class="empty-state">No active workers</div>';
+        return;
+      }
+      
+      workersList.innerHTML = '';
+      workers.forEach(worker => {
+        const workerItem = document.createElement('div');
+        workerItem.className = 'worker-item';
+        workerItem.innerHTML = `
+          <div class="worker-info">
+            <span class="worker-id">Worker #${worker.id}</span>
+            <span class="worker-address">${worker.address}</span>
+            <span class="worker-status ${worker.status}">${worker.status}</span>
+          </div>
+          <button class="btn stop-worker-btn" onclick="stopWorker(${worker.id})">Stop</button>
+        `;
+        workersList.appendChild(workerItem);
+      });
+      
+      // Update worker selection in file operations tab
+      updateWorkerSelection();
+    }
+    
+    // Update worker selection in file operations tab
+    function updateWorkerSelection() {
+      const workerSelection = document.getElementById('workerSelection');
+      if (!workerSelection) return;
+      
+      if (workers.length === 0) {
+        workerSelection.innerHTML = '<p class="empty-state">No workers available. Please start workers in the Worker Management tab.</p>';
+        return;
+      }
+      
+      workerSelection.innerHTML = '';
+      workers.forEach(worker => {
+        if (worker.status === 'running') {
+          const checkbox = document.createElement('div');
+          checkbox.className = 'worker-checkbox';
+          checkbox.innerHTML = `
+            <input type="checkbox" id="worker-${worker.id}" ${worker.selected ? 'checked' : ''} 
+                   onchange="toggleWorkerSelection(${worker.id}, this.checked)">
+            <label for="worker-${worker.id}">Worker #${worker.id} (${worker.address})</label>
+          `;
+          workerSelection.appendChild(checkbox);
+        }
+      });
+    }
+    
+    // Toggle worker selection
+    function toggleWorkerSelection(workerId, selected) {
+      const worker = workers.find(w => w.id === workerId);
+      if (worker) {
+        worker.selected = selected;
+      }
+    }
+    
+    // Stop a worker
+    function stopWorker(workerId) {
+      console.log(`Stopping worker ${workerId}`);
+      if (window.electronAPI && window.electronAPI.stopWorker) {
+        window.electronAPI.stopWorker(workerId);
+      }
+    }
+    
+    // Set up encryption/decryption toggle
+    function setupEncryptDecryptToggle() {
+      const encryptBtn = document.getElementById('encryptBtn');
+      const decryptBtn = document.getElementById('decryptBtn');
+      const processFileBtn = document.getElementById('processFileBtn');
+      
+      if (encryptBtn) {
+        encryptBtn.onclick = function() {
+          encryptBtn.classList.add('active');
+          if (decryptBtn) decryptBtn.classList.remove('active');
+          if (processFileBtn) processFileBtn.textContent = 'Encrypt File';
+          isEncrypt = true;
+          updateOutputPath();
+        };
+      }
+      
+      if (decryptBtn) {
+        decryptBtn.onclick = function() {
+          decryptBtn.classList.add('active');
+          if (encryptBtn) encryptBtn.classList.remove('active');
+          if (processFileBtn) processFileBtn.textContent = 'Decrypt File';
+          isEncrypt = false;
+          updateOutputPath();
+        };
+      }
+    }
+    
+    // Set up IPC listeners when the page loads
+    window.addEventListener('DOMContentLoaded', () => {
+      console.log("DOM loaded, setting up application");
+      
+      // Setup tab navigation
+      setupTabs();
+      
+      // Setup encryption/decryption toggle
+      setupEncryptDecryptToggle();
+      
+      // Setup system info if available
+      if (window.electronAPI) {
+        const hostnameSpan = document.getElementById('hostname');
+        const cpuCountSpan = document.getElementById('cpu-count');
+        
+        if (hostnameSpan && window.electronAPI.getHostname) {
+          hostnameSpan.textContent = `Host: ${window.electronAPI.getHostname()}`;
+        }
+        
+        if (cpuCountSpan && window.electronAPI.getCPUCount) {
+          cpuCountSpan.textContent = `CPUs: ${window.electronAPI.getCPUCount()}`;
+        }
+        
+        // Set up IPC listeners
+        if (window.electronAPI.on) {
+          try {
+            // Worker events
+            window.electronAPI.on('worker-started-result', (data) => {
+              console.log("Worker started:", data);
+              if (data && typeof data.id !== 'undefined') {
+                const worker = {
+                  id: data.id,
+                  address: data.address,
+                  status: 'running',
+                  selected: true
+                };
+                workers.push(worker);
+                updateWorkersUI();
+              }
+            });
+            
+            window.electronAPI.on('worker-stopped', (data) => {
+              console.log("Worker stopped:", data);
+              if (data && typeof data.id !== 'undefined') {
+                workers = workers.filter(w => w.id !== data.id);
+                updateWorkersUI();
+              }
+            });
+            
+            window.electronAPI.on('worker-stopping', (data) => {
+              console.log("Worker stopping:", data);
+              if (data && typeof data.id !== 'undefined') {
+                const worker = workers.find(w => w.id === data.id);
+                if (worker) {
+                  worker.status = 'stopping';
+                  updateWorkersUI();
+                }
+              }
+            });
+            
+            window.electronAPI.on('worker-output', (data) => {
+              console.log("Worker output:", data);
+              if (data && data.output) {
+                appendToLog(`Worker ${data.id}: ${data.output}`);
+              }
+            });
+            
+            window.electronAPI.on('worker-error', (data) => {
+              console.log("Worker error:", data);
+              if (data && data.output) {
+                appendToLog(`Worker ${data.id} ERROR: ${data.output}`, true);
+              }
+            });
+            
+            // Process events for output handling
+            window.electronAPI.on('process-output', (data) => {
+              console.log("Process output:", data);
+              if (data && data.output) {
+                appendToLog(data.output);
+                
+                // Check for progress updates
+                if (data.output.includes('Progress:')) {
+                  const match = data.output.match(/Progress:\s+(\d+)%/);
+                  if (match && match[1]) {
+                    updateProgress(parseInt(match[1], 10));
+                  }
+                }
+              }
+            });
+            
+            window.electronAPI.on('process-error', (data) => {
+              console.log("Process error:", data);
+              if (data && data.output) {
+                appendToLog(`ERROR: ${data.output}`, true);
+              }
+            });
+            
+            window.electronAPI.on('process-completed', (data) => {
+              console.log("Process completed:", data);
+              const code = data && typeof data.code !== 'undefined' ? data.code : 0;
+              
+              const statusMessage = document.getElementById('statusMessage');
+              if (statusMessage) {
+                statusMessage.textContent = code === 0 
+                  ? "File processing completed successfully!" 
+                  : `File processing failed with code: ${code}`;
+              }
+              
+              const progressContainer = document.getElementById('progressContainer');
+              if (progressContainer && code === 0) {
+                updateProgress(100);
+                
+                // Hide progress after a delay
+                setTimeout(() => {
+                  progressContainer.style.display = 'none';
+                }, 3000);
+              }
+              
+              appendToLog(`Process completed with exit code: ${code}`);
+            });
+            
+            console.log("All IPC listeners set up successfully");
+          } catch (error) {
+            console.error("Error setting up IPC listeners:", error);
+          }
+        }
+      }
+    });
+
+    // Append to log
+    function appendToLog(message, isError = false) {
+      const logOutput = document.getElementById('logOutput');
+      if (!logOutput) return;
+      
+      const timestamp = new Date().toLocaleTimeString();
+      const logEntry = document.createElement('div');
+      logEntry.className = isError ? 'log-entry error' : 'log-entry';
+      logEntry.textContent = `[${timestamp}] ${message}`;
+      logOutput.appendChild(logEntry);
+      
+      // Auto-scroll to bottom
+      logOutput.scrollTop = logOutput.scrollHeight;
+      
+      // Also log to console
+      console.log(`${isError ? 'ERROR' : 'INFO'}: ${message}`);
+    }
+  </script>
+</body>
+</html> 
