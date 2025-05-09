@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4a90e2" />
+      <stop offset="100%" stop-color="#7e57c2" />
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" rx="30" fill="#2c3e50" />
+  <circle cx="128" cy="128" r="100" fill="url(#gradient)" />
+  
+  <!-- File icons -->
+  <g fill="white" transform="translate(78, 78)">
+    <rect x="0" y="0" width="100" height="25" rx="8" />
+    <rect x="0" y="40" width="100" height="25" rx="8" />
+    <rect x="0" y="80" width="100" height="25" rx="8" />
+    
+    <!-- Lock icon -->
+    <rect x="60" y="15" width="40" height="50" rx="8" transform="translate(-15, -15)" />
+    <circle cx="60" cy="0" r="15" transform="translate(-15, -15)" />
+  </g>
+</svg> 
