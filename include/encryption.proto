@@ -3,19 +3,34 @@ syntax = "proto3";
 package encryption;
 
 service EncryptionService {
-    rpc EncryptChunk (ChunkRequest) returns (ChunkResponse) {}
+    rpc EncryptChunk (ChunkRequest) returns (ChunkResponse);
+    rpc DecryptChunk (ChunkRequest) returns (ChunkResponse);
+    rpc TestConnection (TestRequest) returns (TestResponse);
 }
 
 message ChunkRequest {
-    bytes data = 1;
-    int32 chunk_id = 2;
-    bytes key = 3;      //Changed from string to bytes
-    bytes iv = 4;       //Changed from string to bytes
+    bytes data = 1;          // Raw data to be processed
+    int32 chunk_id = 2;      // Unique identifier for the chunk
+    bytes key = 3;           // Encryption/decryption key (32 bytes for AES-256)
+    bytes iv = 4;            // Initialization vector (16 bytes for AES)
+    bool block_aligned = 5;  // Flag indicating if the chunk size is aligned with AES block size
 }
 
 message ChunkResponse {
-    bytes encrypted_data = 1;
-    int32 chunk_id = 2;
-    bool success = 3;
-    string error_message = 4;
+    bytes processed_data = 1; // Renamed from encrypted_data to be more generic
+    int32 chunk_id = 2;      // Echoes back the chunk ID
+    bool success = 3;        // Operation status flag
+    string error_message = 4; // Detailed error if success=false
+}
+
+message TestRequest {
+    // Can add fields like test payload if needed
+    string test_message = 1;  // Optional test message
+}
+
+message TestResponse {
+    bool alive = 1;           // Service availability flag
+    string worker_id = 2;     // Identifier for the worker
+    string status = 3;        // Additional status information
+    int64 timestamp = 4;      // Server timestamp
 }

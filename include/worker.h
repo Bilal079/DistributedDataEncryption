@@ -11,7 +11,16 @@ public:
                              const encryption::ChunkRequest* request, 
                              encryption::ChunkResponse* response) override;
     
-    void runServer(const std::string& serverAddress);
+    grpc::Status DecryptChunk(grpc::ServerContext* context,
+                             const encryption::ChunkRequest* request,
+                             encryption::ChunkResponse* response) override;
+    
+    void runServer(const std::string& serverAddress, bool useTLS = false);
+
+    grpc::Status TestConnection(
+        grpc::ServerContext* context,
+        const encryption::TestRequest* request,
+        encryption::TestResponse* response);
 };
 
 #endif // WORKER_H

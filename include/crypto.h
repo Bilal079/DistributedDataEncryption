@@ -1,20 +1,24 @@
+// crypto.h
 #ifndef CRYPTO_H
 #define CRYPTO_H
 
-#include <string>
 #include <vector>
-#include <openssl/evp.h>
-using namespace std;
+#include <string>
 
 class AESCrypto {
 public:
-    static vector<unsigned char> encrypt(const vector<char>& data, 
-                                             const string& key, 
-                                             const string& iv);
-    static vector<char> decrypt(const vector<unsigned char>& encryptedData, 
-                                    const string& key, 
-                                    const string& iv);
-    static void generateKeyIV(string& key, string& iv);
+    static std::vector<unsigned char> encrypt(const std::vector<char>& data,
+                                            const std::string& key,
+                                            const std::string& iv);
+    
+    static std::vector<char> decrypt(const std::vector<unsigned char>& encryptedData,
+                                   const std::string& key,
+                                   const std::string& iv);
+    
+    static void generateKeyIV(std::string& key, std::string& iv);
+    
+    // Add this new method
+    static void printHex(const std::string& data, const std::string& label);
 };
 
 #endif // CRYPTO_H
